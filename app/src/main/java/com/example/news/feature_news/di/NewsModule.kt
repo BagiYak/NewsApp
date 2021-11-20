@@ -44,6 +44,9 @@ object NewsModule {
         return Room.databaseBuilder(
             app, NewsDatabase::class.java, "news_db"
         )
+            // fallbackToDestructiveMigration() is temporary need for Room to re-create all of the tables
+            // & not to provide a Migration in the builder each time when we change Database structure
+            // don't use in production
             .fallbackToDestructiveMigration()
             .build()
     }
