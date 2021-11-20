@@ -56,6 +56,9 @@ class NewsViewModel @Inject constructor(
                             ))
                         }
                         is Resource.Loading -> {
+                            _eventFlow.emit(UIEvent.ShowSnackbar(
+                                "news loading..."
+                            ))
                             _state.value = state.value.copy(
                                 newsItems = result.data ?: emptyList(),
                                 isLoading = true
