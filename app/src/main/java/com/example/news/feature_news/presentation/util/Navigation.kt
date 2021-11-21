@@ -48,8 +48,6 @@ fun Navigation(navController: NavHostController) {
             )
         ) {
             it.arguments?.getString("article")?.let { jsonArticle ->
-                println("arg json: $jsonArticle")
-                println("fromJson: ${Gson().fromJson(jsonArticle, Article::class.java)}")
                 ArticleScreen(
                     navController = navController,
                     viewModel = articleViewModel,

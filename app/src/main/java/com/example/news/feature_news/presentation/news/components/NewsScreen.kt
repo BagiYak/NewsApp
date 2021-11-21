@@ -46,14 +46,6 @@ fun NewsScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                Text(
-                    text = "All news",
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {

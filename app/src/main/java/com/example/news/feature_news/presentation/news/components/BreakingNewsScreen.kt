@@ -33,34 +33,26 @@ fun BreakingNewsScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Breaking news",
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(state.newsItems.size) { i ->
+                    val article = state.newsItems[i]
                     Text(
                         text = "Article ${i + 1}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Right
                     )
-                    val article = state.newsItems[i]
-                    if(i > 0) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     NewsItem(
                         navController = navController,
                         article = article
                     )
                     if(i < state.newsItems.size - 1) {
+                        Spacer(modifier = Modifier.height(8.dp))
                         Divider()
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
