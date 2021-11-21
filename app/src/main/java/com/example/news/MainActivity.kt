@@ -12,10 +12,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.news.feature_news.domain.model.BottomNavItem
-import com.example.news.feature_news.presentation.BreakingNewsViewModel
-import com.example.news.feature_news.presentation.NewsViewModel
-import com.example.news.feature_news.presentation.composable.BottomNavigationBar
-import com.example.news.feature_news.presentation.composable.Navigation
+import com.example.news.feature_news.presentation.news.BreakingNewsViewModel
+import com.example.news.feature_news.presentation.news.NewsViewModel
+import com.example.news.feature_news.presentation.news.SavedNewsViewModel
+import com.example.news.feature_news.presentation.news.components.BottomNavigationBar
+import com.example.news.feature_news.presentation.util.Navigation
+import com.example.news.feature_news.presentation.util.Screen
 import com.example.news.ui.theme.BottomNavWithBadgesTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -32,6 +34,7 @@ class MainActivity : ComponentActivity() {
 
                 val newsViewModel: NewsViewModel = viewModel()
                 val breakingNewsViewModel: BreakingNewsViewModel = viewModel()
+                val savedNewsViewModel: SavedNewsViewModel = viewModel()
                 val scaffoldState = rememberScaffoldState()
                 val navController = rememberNavController()
 
@@ -54,21 +57,21 @@ class MainActivity : ComponentActivity() {
                             items = listOf(
                                 BottomNavItem(
                                     name = "All news",
-                                    route = "news",
+                                    route = Screen.NewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_all_news),
                                     badgeCount = newsViewModel.state.value.newsItems.size
                                 ),
                                 BottomNavItem(
                                     name = "Top news",
-                                    route = "breaking_news",
+                                    route = Screen.BreakingNewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_breaking_news),
                                     badgeCount = breakingNewsViewModel.state.value.newsItems.size
                                 ),
                                 BottomNavItem(
                                     name = "Saved news",
-                                    route = "saved_news",
+                                    route = Screen.SavedNewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark),
-                                    badgeCount = 0
+                                    badgeCount = savedNewsViewModel.state.value.newsItems.size
                                 )
                             ),
                             navController = navController,

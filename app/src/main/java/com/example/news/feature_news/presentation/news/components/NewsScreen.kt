@@ -1,4 +1,4 @@
-package com.example.news.feature_news.presentation.composable
+package com.example.news.feature_news.presentation.news.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,15 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.news.feature_news.presentation.util.NewsEndpoint
-import com.example.news.feature_news.presentation.util.NewsEvent
-import com.example.news.feature_news.presentation.NewsItem
-import com.example.news.feature_news.presentation.NewsViewModel
+import androidx.navigation.NavHostController
+import com.example.news.feature_news.presentation.news.NewsEndpoint
+import com.example.news.feature_news.presentation.news.NewsEvent
+import com.example.news.feature_news.presentation.news.NewsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun NewsScreen(viewModel: NewsViewModel) {
+fun NewsScreen(
+    navController: NavHostController,
+    viewModel: NewsViewModel
+) {
 
     val state = viewModel.state.value
     val isRefreshing = rememberSwipeRefreshState(false)
@@ -56,7 +59,7 @@ fun NewsScreen(viewModel: NewsViewModel) {
                 ) {
                     items(state.newsItems.size) { i ->
                         Text(
-                            text = "Article $i",
+                            text = "Article ${i + 1}",
                             modifier = Modifier
                                 .fillMaxWidth(),
                             textAlign = TextAlign.Right
@@ -65,7 +68,10 @@ fun NewsScreen(viewModel: NewsViewModel) {
                         if(i > 0) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
-                        NewsItem(article = article)
+                        NewsItem(
+                            navController = navController,
+                            article = article
+                        )
                         if(i < state.newsItems.size - 1) {
                             Divider()
                         }

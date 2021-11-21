@@ -1,4 +1,4 @@
-package com.example.news.feature_news.presentation.util
+package com.example.news.feature_news.presentation.news
 
 import com.example.news.feature_news.domain.model.Article
 

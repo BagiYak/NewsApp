@@ -2,7 +2,6 @@ package com.example.news.feature_news.data.repository
 
 import com.example.news.core.util.Resource
 import com.example.news.feature_news.data.local.ArticleDao
-import com.example.news.feature_news.data.local.entity.ArticleEntity
 import com.example.news.feature_news.data.remote.NewsApi
 import com.example.news.feature_news.domain.model.Article
 import com.example.news.feature_news.domain.repository.NewsRepository
@@ -86,7 +85,11 @@ class NewsRepositoryImpl(
 
     }
 
-    override fun getSavedNews(): Flow<Resource<List<Article>>> = flow {
+    override suspend fun saveArticle(article: Article) {
+        return dao.insertArticle(article.toArticleEntity())
+    }
+
+    override fun getSavedArticles(): Flow<Resource<List<Article>>> = flow {
 
         // 1 - to show progress bar, we need to emit loading
         emit(Resource.Loading())
@@ -95,7 +98,7 @@ class NewsRepositoryImpl(
         val articles = dao.getArticles().map { it.toArticle() }
 
         // 3 - to show data, we need to emit loading with our data from DataBase
-        emit(Resource.Loading(data = articles))
+        emit(Resource.Success(data = articles))
 
     }
 

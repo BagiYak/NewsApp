@@ -1,4 +1,4 @@
-package com.example.news.feature_news.presentation.composable
+package com.example.news.feature_news.presentation.news.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.BottomNavigation

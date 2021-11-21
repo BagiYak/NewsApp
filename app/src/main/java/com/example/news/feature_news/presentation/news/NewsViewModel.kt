@@ -1,15 +1,11 @@
-package com.example.news.feature_news.presentation
+package com.example.news.feature_news.presentation.news
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.core.util.Resource
 import com.example.news.feature_news.domain.use_case.NewsUseCases
-import com.example.news.feature_news.presentation.util.NewsEndpoint
-import com.example.news.feature_news.presentation.util.NewsEvent
-import com.example.news.feature_news.presentation.util.NewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BreakingNewsViewModel @Inject constructor(
+class NewsViewModel @Inject constructor(
     private val newsUseCases: NewsUseCases
 ) : ViewModel() {
 
@@ -33,17 +29,13 @@ class BreakingNewsViewModel @Inject constructor(
     var getNewsJob: Job? = null
 
     init {
-        Log.d("BreakingNewsViewModel: ", "$this")
-        onGetNews(NewsEndpoint.BreakingNews)
+        onGetNews(NewsEndpoint.EverythingNews)
     }
 
     fun onEvent(event: NewsEvent) {
         when (event) {
             is NewsEvent.GetNews -> {
                 onGetNews(event.newsEndpoint)
-            }
-            is NewsEvent.SaveArticle -> {
-
             }
         }
     }
@@ -66,14 +58,18 @@ class BreakingNewsViewModel @Inject constructor(
                                 newsItems = result.data ?: emptyList(),
                                 isLoading = false
                             )
-                            _eventFlow.emit(UIEvent.ShowSnackbar(
-                                result.message ?: "Unknown error"
-                            ))
+                            _eventFlow.emit(
+                                UIEvent.ShowSnackbar(
+                                    result.message ?: "Unknown error"
+                                )
+                            )
                         }
                         is Resource.Loading -> {
-                            _eventFlow.emit(UIEvent.ShowSnackbar(
-                                "Breaking News loading..."
-                            ))
+                            _eventFlow.emit(
+                                UIEvent.ShowSnackbar(
+                                    "News loading..."
+                                )
+                            )
                             _state.value = state.value.copy(
                                 newsItems = result.data ?: emptyList(),
                                 isLoading = true

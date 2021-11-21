@@ -10,6 +10,8 @@ interface NewsRepository {
 
     fun getBreakingNews(): Flow<Resource<List<Article>>>
 
-    fun getSavedNews(): Flow<Resource<List<Article>>>
+    suspend fun saveArticle(article: Article)
+
+    fun getSavedArticles(): Flow<Resource<List<Article>>>
 
 }

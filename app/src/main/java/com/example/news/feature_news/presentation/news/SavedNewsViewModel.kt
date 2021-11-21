@@ -1,15 +1,11 @@
-package com.example.news.feature_news.presentation
+package com.example.news.feature_news.presentation.news
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.core.util.Resource
 import com.example.news.feature_news.domain.use_case.NewsUseCases
-import com.example.news.feature_news.presentation.util.NewsEndpoint
-import com.example.news.feature_news.presentation.util.NewsEvent
-import com.example.news.feature_news.presentation.util.NewsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(
+class SavedNewsViewModel @Inject constructor(
     private val newsUseCases: NewsUseCases
 ) : ViewModel() {
 
@@ -30,29 +26,25 @@ class NewsViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    var getNewsJob: Job? = null
+    var getJob: Job? = null
 
     init {
-        Log.d("NewsViewModel: ", "$this")
-        onGetNews(NewsEndpoint.EverythingNews)
+        onGetSavedNews()
     }
 
     fun onEvent(event: NewsEvent) {
         when (event) {
-            is NewsEvent.GetNews -> {
-                onGetNews(event.newsEndpoint)
-            }
-            is NewsEvent.SaveArticle -> {
-
+            is NewsEvent.GetSavedNews -> {
+                onGetSavedNews()
             }
         }
     }
 
-    private fun onGetNews(newsEndpoint: NewsEndpoint) {
-        getNewsJob?.cancel()
+    private fun onGetSavedNews() {
+        getJob?.cancel()
 
-        getNewsJob = viewModelScope.launch {
-            newsUseCases.getNews(newsEndpoint)
+        getJob = viewModelScope.launch {
+            newsUseCases.getArticles()
                 .onEach { result ->
                     when(result) {
                         is Resource.Success -> {
@@ -66,14 +58,18 @@ class NewsViewModel @Inject constructor(
                                 newsItems = result.data ?: emptyList(),
                                 isLoading = false
                             )
-                            _eventFlow.emit(UIEvent.ShowSnackbar(
-                                result.message ?: "Unknown error"
-                            ))
+                            _eventFlow.emit(
+                                UIEvent.ShowSnackbar(
+                                    result.message ?: "Unknown error"
+                                )
+                            )
                         }
                         is Resource.Loading -> {
-                            _eventFlow.emit(UIEvent.ShowSnackbar(
-                                "News loading..."
-                            ))
+                            _eventFlow.emit(
+                                UIEvent.ShowSnackbar(
+                                    "Saved articles loading..."
+                                )
+                            )
                             _state.value = state.value.copy(
                                 newsItems = result.data ?: emptyList(),
                                 isLoading = true

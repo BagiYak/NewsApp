@@ -1,4 +1,4 @@
-package com.example.news.feature_news.presentation.composable
+package com.example.news.feature_news.presentation.news.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,11 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.news.feature_news.presentation.BreakingNewsViewModel
-import com.example.news.feature_news.presentation.NewsItem
+import androidx.navigation.NavHostController
+import com.example.news.feature_news.presentation.news.SavedNewsViewModel
 
 @Composable
-fun BreakingNewsScreen(viewModel: BreakingNewsViewModel) {
+fun SavedNewsScreen(
+    navController: NavHostController,
+    viewModel: SavedNewsViewModel
+) {
 
     val state = viewModel.state.value
 
@@ -31,7 +34,7 @@ fun BreakingNewsScreen(viewModel: BreakingNewsViewModel) {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Breaking news",
+                text = "Saved news",
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -43,7 +46,7 @@ fun BreakingNewsScreen(viewModel: BreakingNewsViewModel) {
             ) {
                 items(state.newsItems.size) { i ->
                     Text(
-                        text = "Article $i",
+                        text = "Article ${i + 1}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Right
@@ -52,7 +55,10 @@ fun BreakingNewsScreen(viewModel: BreakingNewsViewModel) {
                     if(i > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-                    NewsItem(article = article)
+                    NewsItem(
+                        navController = navController,
+                        article = article
+                    )
                     if(i < state.newsItems.size - 1) {
                         Divider()
                     }
