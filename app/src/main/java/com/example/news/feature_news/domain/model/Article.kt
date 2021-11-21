@@ -3,7 +3,7 @@ package com.example.news.feature_news.domain.model
 import com.example.news.feature_news.data.local.entity.ArticleEntity
 
 data class Article(
-    val id: Int?,
+    val id: Int? = null,
     val author: String?,
     val title: String?,
     val description: String?,

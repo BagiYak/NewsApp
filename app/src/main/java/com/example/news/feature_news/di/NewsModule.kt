@@ -7,7 +7,7 @@ import com.example.news.feature_news.data.local.NewsDatabase
 import com.example.news.feature_news.data.remote.NewsApi
 import com.example.news.feature_news.data.repository.NewsRepositoryImpl
 import com.example.news.feature_news.domain.repository.NewsRepository
-import com.example.news.feature_news.domain.use_case.GetBreakingNews
+import com.example.news.feature_news.domain.use_case.GetNews
 import com.example.news.feature_news.domain.use_case.NewsUseCases
 import dagger.Module
 import dagger.Provides
@@ -25,7 +25,7 @@ object NewsModule {
     @Singleton
     fun provideNewsUseCases(repository: NewsRepository): NewsUseCases {
         return NewsUseCases(
-            getBreakingNews = GetBreakingNews(repository)
+            getNews = GetNews(repository)
         )
     }
 

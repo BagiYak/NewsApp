@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(
+class BreakingNewsViewModel @Inject constructor(
     private val newsUseCases: NewsUseCases
 ) : ViewModel() {
 
@@ -33,8 +33,8 @@ class NewsViewModel @Inject constructor(
     var getNewsJob: Job? = null
 
     init {
-        Log.d("NewsViewModel: ", "$this")
-        onGetNews(NewsEndpoint.EverythingNews)
+        Log.d("BreakingNewsViewModel: ", "$this")
+        onGetNews(NewsEndpoint.BreakingNews)
     }
 
     fun onEvent(event: NewsEvent) {
@@ -72,7 +72,7 @@ class NewsViewModel @Inject constructor(
                         }
                         is Resource.Loading -> {
                             _eventFlow.emit(UIEvent.ShowSnackbar(
-                                "News loading..."
+                                "Breaking News loading..."
                             ))
                             _state.value = state.value.copy(
                                 newsItems = result.data ?: emptyList(),

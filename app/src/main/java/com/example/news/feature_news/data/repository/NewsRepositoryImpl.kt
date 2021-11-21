@@ -2,9 +2,11 @@ package com.example.news.feature_news.data.repository
 
 import com.example.news.core.util.Resource
 import com.example.news.feature_news.data.local.ArticleDao
+import com.example.news.feature_news.data.local.entity.ArticleEntity
 import com.example.news.feature_news.data.remote.NewsApi
 import com.example.news.feature_news.domain.model.Article
 import com.example.news.feature_news.domain.repository.NewsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -15,22 +17,18 @@ class NewsRepositoryImpl(
     private val dao: ArticleDao,
 ): NewsRepository {
 
-    override fun getBreakingNews(): Flow<Resource<List<Article>>> = flow {
-        // 1 - to show progress bar, we need to emit loading
+    override fun getEverythingNews(): Flow<Resource<List<Article>>> = flow {
+
+        // 1 - show progress bar, we need to emit loading
         emit(Resource.Loading())
 
-        // 2 - get articles from DataBase on android device
-        val articles = dao.getArticles().map { it.toArticle() }
+        var articles = emptyList<Article>()
 
-        // 3 - to show data, we need to emit loading with our data from DataBase
-        emit(Resource.Loading(data = articles))
-
-        // 4 - to get data from API
+        // 2 - get data from API
         try {
-            val response = api.getBreakingNews()
+            val response = api.getEverythingNews()
             val remoteArticles = response.articles
-            dao.deleteArticles(remoteArticles.map { it.toArticleEntity() })
-            dao.insertArticles(remoteArticles.map { it.toArticleEntity() })
+            articles = remoteArticles.map { it.toArticle() }
         } catch (e: HttpException) {
             emit(Resource.Error(
                 message = "http error - while getting break news from api server",
@@ -43,11 +41,61 @@ class NewsRepositoryImpl(
             ))
         }
 
-        // 5 - get new articles from DataBase on android device
-        val newArticles = dao.getArticles().map { it.toArticle() }
+        // 3 - show new data, we need to emit Success with our data from Api
+        emit(Resource.Success(data = articles))
 
-        // 6 - to show new data, we need to emit loading with our data from DataBase
-        emit(Resource.Success(data = newArticles))
+    }
+
+    override fun getBreakingNews(): Flow<Resource<List<Article>>> = flow {
+
+        // 1 - show progress bar, we need to emit loading
+        emit(Resource.Loading())
+
+        var articles = emptyList<Article>()
+        var totalArticlesSize = 0
+        println("start total size: $totalArticlesSize")
+
+        while(true) {
+
+            // 2 - get data from API
+            try {
+                val response = api.getBreakingNews()
+                // 3 - show new data, we need to emit Success with our data from Api
+                if(response.totalResults > totalArticlesSize) {
+                    totalArticlesSize = response.totalResults
+                    println("total size changed: $totalArticlesSize")
+                    val remoteArticles = response.articles
+                    articles = remoteArticles.map { it.toArticle() }
+                    emit(Resource.Success(data = articles))
+                }
+            } catch (e: HttpException) {
+                emit(Resource.Error(
+                    message = "http error - while getting break news from api server",
+                    data = articles
+                ))
+            } catch (e: IOException) {
+                emit(Resource.Error(
+                    message = "IO error - while getting break news fro api server",
+                    data = articles
+                ))
+            }
+
+            // 4 - delay 5 second before next request to api
+            delay(5000)
+        }
+
+    }
+
+    override fun getSavedNews(): Flow<Resource<List<Article>>> = flow {
+
+        // 1 - to show progress bar, we need to emit loading
+        emit(Resource.Loading())
+
+        // 2 - get articles from DataBase on android device
+        val articles = dao.getArticles().map { it.toArticle() }
+
+        // 3 - to show data, we need to emit loading with our data from DataBase
+        emit(Resource.Loading(data = articles))
 
     }
 

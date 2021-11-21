@@ -1,6 +1,6 @@
 package com.example.news.feature_news.data.remote.dto
 
-import com.example.news.feature_news.data.local.entity.ArticleEntity
+import com.example.news.feature_news.domain.model.Article
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -34,8 +34,8 @@ data class ArticleDto(
     @Expose
     val content: String?,
 ) {
-    fun toArticleEntity(): ArticleEntity {
-        return ArticleEntity(
+    fun toArticle(): Article {
+        return Article(
             author = author,
             title = title,
             description = description,

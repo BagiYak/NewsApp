@@ -7,9 +7,9 @@ import retrofit2.http.Query
 
 interface NewsApi {
 
-    // endpoint api to get 'top of headlines' from NewsApi service
-    @GET("v2/top-headlines")
-    suspend fun getBreakingNews(
+    // endpoint api to get 'everything' from NewsApi service
+    @GET("v2/everything")
+    suspend fun getEverythingNews(
         @Query("q")
         theme: String = "apple",
         @Query("pageSize")
@@ -20,9 +20,9 @@ interface NewsApi {
         apiKey: String = API_KEY
     ): NewsResponse
 
-    // endpoint api to get 'everything' from NewsApi service
-    @GET("v2/everything")
-    suspend fun getEverythingNews(
+    // endpoint api to get 'top of headlines' from NewsApi service
+    @GET("v2/top-headlines")
+    suspend fun getBreakingNews(
         @Query("q")
         theme: String = "apple",
         @Query("pageSize")

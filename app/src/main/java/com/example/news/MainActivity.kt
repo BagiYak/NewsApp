@@ -3,25 +3,22 @@ package com.example.news
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
-import com.example.news.feature_news.presentation.NewsItem
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.news.feature_news.domain.model.BottomNavItem
+import com.example.news.feature_news.presentation.BreakingNewsViewModel
 import com.example.news.feature_news.presentation.NewsViewModel
-import com.example.news.ui.theme.NewsTheme
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.example.news.feature_news.presentation.composable.BottomNavigationBar
+import com.example.news.feature_news.presentation.composable.Navigation
+import com.example.news.ui.theme.BottomNavWithBadgesTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -31,15 +28,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            NewsTheme {
+            BottomNavWithBadgesTheme {
 
-                val viewModel: NewsViewModel = hiltViewModel()
-                val state = viewModel.state.value
+                val newsViewModel: NewsViewModel = viewModel()
+                val breakingNewsViewModel: BreakingNewsViewModel = viewModel()
                 val scaffoldState = rememberScaffoldState()
-                val isRefreshing = rememberSwipeRefreshState(false)
+                val navController = rememberNavController()
 
                 LaunchedEffect(key1 = true) {
-                    viewModel.eventFlow.collectLatest { event ->
+                    newsViewModel.eventFlow.collectLatest { event ->
                         when(event) {
                             is NewsViewModel.UIEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(
@@ -51,61 +48,39 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Scaffold(
-                    scaffoldState = scaffoldState
-                ) {
-                    SwipeRefresh(
-                        state = isRefreshing,
-                        onRefresh = {
-                            isRefreshing.isRefreshing = true
-                            viewModel.onGetBreakingNews()
-                            lifecycleScope.launch {
-                                viewModel.getBreakingNewsJob?.join()
-                                isRefreshing.isRefreshing = false
-                            }
-                        },
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(MaterialTheme.colors.background)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                            ) {
-                                Text(
-                                    text = "Breaking news",
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Center
+                    scaffoldState = scaffoldState,
+                    bottomBar = {
+                        BottomNavigationBar(
+                            items = listOf(
+                                BottomNavItem(
+                                    name = "All news",
+                                    route = "news",
+                                    icon = ImageVector.vectorResource(id = R.drawable.ic_all_news),
+                                    badgeCount = newsViewModel.state.value.newsItems.size
+                                ),
+                                BottomNavItem(
+                                    name = "Top news",
+                                    route = "breaking_news",
+                                    icon = ImageVector.vectorResource(id = R.drawable.ic_breaking_news),
+                                    badgeCount = breakingNewsViewModel.state.value.newsItems.size
+                                ),
+                                BottomNavItem(
+                                    name = "Saved news",
+                                    route = "saved_news",
+                                    icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark),
+                                    badgeCount = 0
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    items(state.newsItems.size) { i ->
-                                        Text(
-                                            text = "Article $i",
-                                            modifier = Modifier
-                                                .fillMaxWidth(),
-                                            textAlign = TextAlign.Right
-                                        )
-                                        val article = state.newsItems[i]
-                                        if(i > 0) {
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                        }
-                                        NewsItem(article = article)
-                                        if(i < state.newsItems.size - 1) {
-                                            Divider()
-                                        }
-                                    }
-                                }
+                            ),
+                            navController = navController,
+                            onItemClick = {
+                                navController.navigate(it.route)
                             }
-                            if(state.isLoading) {
-                                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                            }
-                        }
+                        )
                     }
+                ) {
+                    Navigation(
+                        navController = navController
+                    )
                 }
 
             }
