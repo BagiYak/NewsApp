@@ -11,11 +11,12 @@ class GetNews(
 ) {
 
     operator fun invoke(
-        newsEndpoint: NewsEndpoint = NewsEndpoint.BreakingNews
+        newsEndpoint: NewsEndpoint = NewsEndpoint.BreakingNews,
+        page: Int = 1,
     ): Flow<Resource<List<Article>>> {
         return when(newsEndpoint) {
             is NewsEndpoint.BreakingNews -> repository.getBreakingNews()
-            is NewsEndpoint.EverythingNews -> repository.getEverythingNews()
+            is NewsEndpoint.EverythingNews -> repository.getEverythingNews(page)
         }
     }
 

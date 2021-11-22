@@ -46,16 +46,17 @@ class BreakingNewsViewModel @Inject constructor(
         getNewsJob = viewModelScope.launch {
             newsUseCases.getNews(newsEndpoint)
                 .onEach { result ->
+                    val news = result.data ?: emptyList()
                     when(result) {
                         is Resource.Success -> {
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = false
                             )
                         }
                         is Resource.Error -> {
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = false
                             )
                             _eventFlow.emit(
@@ -71,7 +72,7 @@ class BreakingNewsViewModel @Inject constructor(
                                 )
                             )
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = true
                             )
                         }
@@ -79,7 +80,6 @@ class BreakingNewsViewModel @Inject constructor(
                 }.launchIn(this)
         }
     }
-
 
     sealed class UIEvent {
         data class ShowSnackbar(val message: String): UIEvent()

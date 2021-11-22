@@ -17,7 +17,7 @@ class NewsRepositoryImpl(
     private val dao: ArticleDao,
 ): NewsRepository {
 
-    override fun getEverythingNews(): Flow<Resource<List<Article>>> = flow {
+    override fun getEverythingNews(page: Int): Flow<Resource<List<Article>>> = flow {
 
         // 1 - show progress bar, we need to emit loading
         emit(Resource.Loading())
@@ -26,7 +26,7 @@ class NewsRepositoryImpl(
 
         // 2 - get data from API
         try {
-            val response = api.getEverythingNews()
+            val response = api.getEverythingNews(pageNumber = page)
             val remoteArticles = response.articles
             articles = remoteArticles.map { it.toArticle() }
         } catch (e: HttpException) {

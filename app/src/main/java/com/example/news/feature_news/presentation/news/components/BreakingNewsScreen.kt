@@ -36,8 +36,8 @@ fun BreakingNewsScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(state.newsItems.size) { i ->
-                    val article = state.newsItems[i]
+                items(state.newsItems.value.size) { i ->
+                    val article = state.newsItems.value[i]
                     Text(
                         text = "Article ${i + 1}",
                         modifier = Modifier
@@ -49,7 +49,7 @@ fun BreakingNewsScreen(
                         navController = navController,
                         article = article
                     )
-                    if(i < state.newsItems.size - 1) {
+                    if(i < state.newsItems.value.size - 1) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Divider()
                         Spacer(modifier = Modifier.height(8.dp))

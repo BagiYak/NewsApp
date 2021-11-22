@@ -14,6 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.news.core.util.Constants
+import com.example.news.core.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.news.feature_news.presentation.news.NewsEndpoint
 import com.example.news.feature_news.presentation.news.NewsEvent
 import com.example.news.feature_news.presentation.news.NewsViewModel
@@ -27,6 +29,7 @@ fun NewsScreen(
 ) {
 
     val state = viewModel.state.value
+    val page = viewModel.page.value
     val isRefreshing = rememberSwipeRefreshState(false)
 
     SwipeRefresh(
@@ -49,14 +52,18 @@ fun NewsScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(state.newsItems.size) { i ->
+                    items(state.newsItems.value.size) { i ->
+                        viewModel.onChangeListScrollPosition(i)
+                        if((i+2) > page * QUERY_PAGE_SIZE) {
+                            viewModel.nextPage()
+                        }
                         Text(
                             text = "Article ${i + 1}",
                             modifier = Modifier
                                 .fillMaxWidth(),
                             textAlign = TextAlign.Right
                         )
-                        val article = state.newsItems[i]
+                        val article = state.newsItems.value[i]
                         if(i > 0) {
                             Spacer(modifier = Modifier.height(8.dp))
                         }
@@ -64,7 +71,7 @@ fun NewsScreen(
                             navController = navController,
                             article = article
                         )
-                        if(i < state.newsItems.size - 1) {
+                        if(i < state.newsItems.value.size - 1) {
                             Divider()
                         }
                     }

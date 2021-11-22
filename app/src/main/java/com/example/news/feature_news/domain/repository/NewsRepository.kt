@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
 
-    fun getEverythingNews(): Flow<Resource<List<Article>>>
+    fun getEverythingNews(page: Int): Flow<Resource<List<Article>>>
 
     fun getBreakingNews(): Flow<Resource<List<Article>>>
 

@@ -108,19 +108,19 @@ class MainActivity : ComponentActivity() {
                                     name = "All news",
                                     route = Screen.NewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_all_news),
-                                    badgeCount = newsViewModel.state.value.newsItems.size
+                                    badgeCount = newsViewModel.state.value.newsItems.value.size
                                 ),
                                 BottomNavItem(
                                     name = "Top news",
                                     route = Screen.BreakingNewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_breaking_news),
-                                    badgeCount = breakingNewsViewModel.state.value.newsItems.size
+                                    badgeCount = breakingNewsViewModel.state.value.newsItems.value.size
                                 ),
                                 BottomNavItem(
                                     name = "Saved news",
                                     route = Screen.SavedNewsScreen.route,
                                     icon = ImageVector.vectorResource(id = R.drawable.ic_bookmark),
-                                    badgeCount = savedNewsViewModel.state.value.newsItems.size
+                                    badgeCount = savedNewsViewModel.state.value.newsItems.value.size
                                 )
                             ),
                             navController = navController,

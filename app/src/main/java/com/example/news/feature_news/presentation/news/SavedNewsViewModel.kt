@@ -43,16 +43,17 @@ class SavedNewsViewModel @Inject constructor(
         getJob = viewModelScope.launch {
             newsUseCases.getArticles()
                 .onEach { result ->
+                    val news = result.data ?: emptyList()
                     when(result) {
                         is Resource.Success -> {
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = false
                             )
                         }
                         is Resource.Error -> {
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = false
                             )
                             _eventFlow.emit(
@@ -68,7 +69,7 @@ class SavedNewsViewModel @Inject constructor(
                                 )
                             )
                             _state.value = state.value.copy(
-                                newsItems = result.data ?: emptyList(),
+                                newsItems = mutableStateOf(news),
                                 isLoading = true
                             )
                         }
