@@ -29,7 +29,16 @@ class ArticleViewModel @Inject constructor(
     fun onEvent(event: ArticleEvent) {
         when (event) {
             is ArticleEvent.SaveArticle -> {
-                (state.value.article)?.let { onSaveArticle(it) }
+                (state.value.article)?.let {
+                    onSaveArticle(it)
+                }
+            }
+            is ArticleEvent.DeleteArticle -> {
+                println("article: ${state.value.article}")
+                (state.value.article)?.let {
+                    it.id?.let { id -> onDeleteArticle(id) }
+                    println("deleted article init: id = ${it.id}")
+                }
             }
         }
     }
@@ -41,6 +50,9 @@ class ArticleViewModel @Inject constructor(
             try {
                 newsUseCases.saveArticle(article)
                 _eventFlow.emit(UIEvent.SaveArticle)
+                _state.value = state.value.copy(
+                    article = article
+                )
             } catch(e: Exception) {
                 _eventFlow.emit(
                     UIEvent.ShowSnackbar(
@@ -51,9 +63,32 @@ class ArticleViewModel @Inject constructor(
         }
     }
 
+    private fun onDeleteArticle(id: Int) {
+        println("delete id: $id")
+        daoJob?.cancel()
+
+        daoJob = viewModelScope.launch {
+            try {
+                newsUseCases.deleteArticle(id)
+                _eventFlow.emit(UIEvent.DeleteArticle)
+                _state.value = state.value.copy(
+                    article = null
+                )
+                println("deleted article")
+            } catch(e: Exception) {
+                _eventFlow.emit(
+                    UIEvent.ShowSnackbar(
+                        message = e.message ?: "Couldn't delete article"
+                    )
+                )
+            }
+        }
+    }
+
     sealed class UIEvent {
         data class ShowSnackbar(val message: String): UIEvent()
         object SaveArticle: UIEvent()
+        object DeleteArticle: UIEvent()
     }
 
 }

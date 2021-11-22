@@ -7,10 +7,7 @@ import com.example.news.feature_news.data.local.NewsDatabase
 import com.example.news.feature_news.data.remote.NewsApi
 import com.example.news.feature_news.data.repository.NewsRepositoryImpl
 import com.example.news.feature_news.domain.repository.NewsRepository
-import com.example.news.feature_news.domain.use_case.GetArticles
-import com.example.news.feature_news.domain.use_case.GetNews
-import com.example.news.feature_news.domain.use_case.NewsUseCases
-import com.example.news.feature_news.domain.use_case.SaveArticle
+import com.example.news.feature_news.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +26,7 @@ object NewsModule {
         return NewsUseCases(
             getNews = GetNews(repository),
             saveArticle = SaveArticle(repository),
+            deleteArticle = DeleteArticle(repository),
             getArticles = GetArticles(repository),
         )
     }

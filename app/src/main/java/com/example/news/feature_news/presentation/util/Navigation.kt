@@ -51,6 +51,7 @@ fun Navigation(navController: NavHostController) {
                 ArticleScreen(
                     navController = navController,
                     viewModel = articleViewModel,
+                    savedNewsViewModel = savedNewsViewModel,
                     article = Gson().fromJson(jsonArticle, Article::class.java)
                 )
             }

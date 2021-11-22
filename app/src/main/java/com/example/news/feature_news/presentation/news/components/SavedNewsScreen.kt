@@ -22,7 +22,7 @@ fun SavedNewsScreen(
     viewModel: SavedNewsViewModel
 ) {
 
-    val state = viewModel.state.value
+    val state = viewModel.state
 
     Box(
         modifier = Modifier
@@ -36,14 +36,14 @@ fun SavedNewsScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(state.newsItems.size) { i ->
+                items(state.value.newsItems.size) { i ->
                     Text(
                         text = "Article ${i + 1}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Right
                     )
-                    val article = state.newsItems[i]
+                    val article = state.value.newsItems[i]
                     if(i > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -51,13 +51,16 @@ fun SavedNewsScreen(
                         navController = navController,
                         article = article
                     )
-                    if(i < state.newsItems.size - 1) {
+                    if(i < state.value.newsItems.size - 1) {
                         Divider()
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.height(60.dp))
+                }
             }
         }
-        if(state.isLoading) {
+        if(state.value.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

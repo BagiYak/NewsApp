@@ -12,9 +12,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.news.feature_news.domain.model.BottomNavItem
+import com.example.news.feature_news.presentation.article.ArticleViewModel
 import com.example.news.feature_news.presentation.news.BreakingNewsViewModel
 import com.example.news.feature_news.presentation.news.NewsViewModel
 import com.example.news.feature_news.presentation.news.SavedNewsViewModel
@@ -38,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 val newsViewModel: NewsViewModel = viewModel()
                 val breakingNewsViewModel: BreakingNewsViewModel = viewModel()
                 val savedNewsViewModel: SavedNewsViewModel = viewModel()
+                val articleViewModel: ArticleViewModel = viewModel()
                 val scaffoldState = rememberScaffoldState()
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -46,6 +49,15 @@ class MainActivity : ComponentActivity() {
                     newsViewModel.eventFlow.collectLatest { event ->
                         when(event) {
                             is NewsViewModel.UIEvent.ShowSnackbar -> {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = event.message
+                                )
+                            }
+                        }
+                    }
+                    articleViewModel.eventFlow.collectLatest { event ->
+                        when(event) {
+                            is ArticleViewModel.UIEvent.ShowSnackbar -> {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = event.message
                                 )

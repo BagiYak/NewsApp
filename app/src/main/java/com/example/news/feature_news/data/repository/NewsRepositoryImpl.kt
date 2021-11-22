@@ -1,5 +1,6 @@
 package com.example.news.feature_news.data.repository
 
+import com.example.news.core.util.Constants.Companion.TIME_DELAY
 import com.example.news.core.util.Resource
 import com.example.news.feature_news.data.local.ArticleDao
 import com.example.news.feature_news.data.remote.NewsApi
@@ -52,7 +53,7 @@ class NewsRepositoryImpl(
 
         var articles = emptyList<Article>()
         var totalArticlesSize = 0
-        println("start total size: $totalArticlesSize")
+        println("total size start : $totalArticlesSize")
 
         while(true) {
 
@@ -66,6 +67,8 @@ class NewsRepositoryImpl(
                     val remoteArticles = response.articles
                     articles = remoteArticles.map { it.toArticle() }
                     emit(Resource.Success(data = articles))
+                } else {
+                    println("no new breaking news...")
                 }
             } catch (e: HttpException) {
                 emit(Resource.Error(
@@ -80,13 +83,17 @@ class NewsRepositoryImpl(
             }
 
             // 4 - delay 5 second before next request to api
-            delay(5000)
+            delay(TIME_DELAY)
         }
 
     }
 
     override suspend fun saveArticle(article: Article) {
         return dao.insertArticle(article.toArticleEntity())
+    }
+
+    override suspend fun deleteArticle(id: Int) {
+        return dao.deleteArticle(id)
     }
 
     override fun getSavedArticles(): Flow<Resource<List<Article>>> = flow {

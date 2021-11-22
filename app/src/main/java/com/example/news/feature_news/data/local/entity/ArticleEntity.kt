@@ -17,7 +17,6 @@ data class ArticleEntity(
     val urlToImage: String?,
     val publishedAt: String?,
     val content: String?,
-    val favorite: Boolean = false,
 ) {
     fun toArticle(): Article {
         return Article(

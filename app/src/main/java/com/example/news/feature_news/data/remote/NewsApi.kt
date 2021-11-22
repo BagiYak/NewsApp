@@ -1,6 +1,7 @@
 package com.example.news.feature_news.data.remote
 
 import com.example.news.core.util.Constants.Companion.API_KEY
+import com.example.news.core.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.news.feature_news.data.remote.dto.NewsResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,7 +14,7 @@ interface NewsApi {
         @Query("q")
         theme: String = "apple",
         @Query("pageSize")
-        pageSize: Int = 15,
+        pageSize: Int = QUERY_PAGE_SIZE,
         @Query("page")
         pageNumber: Int = 1,
         @Query("apiKey")
@@ -26,7 +27,7 @@ interface NewsApi {
         @Query("q")
         theme: String = "apple",
         @Query("pageSize")
-        pageSize: Int = 15,
+        pageSize: Int = QUERY_PAGE_SIZE,
         @Query("page")
         pageNumber: Int = 1,
         @Query("apiKey")

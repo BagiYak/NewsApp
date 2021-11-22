@@ -12,6 +12,8 @@ interface NewsRepository {
 
     suspend fun saveArticle(article: Article)
 
+    suspend fun deleteArticle(id: Int)
+
     fun getSavedArticles(): Flow<Resource<List<Article>>>
 
 }

@@ -68,6 +68,9 @@ fun NewsScreen(
                             Divider()
                         }
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(60.dp))
+                    }
                 }
             }
             if(state.isLoading) {
